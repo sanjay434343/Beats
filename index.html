@@ -9,40 +9,153 @@
       padding: 0;
       box-sizing: border-box;
     }
-   
+    
     body {
       background: linear-gradient(135deg, #0a0a0a, #1a1a2e, #16213e);
       font-family: 'Arial', sans-serif;
       color: white;
       overflow: hidden;
       height: 100vh;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
     }
-   
+    
     #canvas {
       display: block;
       cursor: crosshair;
       position: relative;
       z-index: 1;
     }
-   
+    
     .controls {
       position: absolute;
-      top: 20px;
-      left: 20px;
+      top: 10px;
+      left: 10px;
       z-index: 10;
-      background: rgba(0, 20, 40, 0.9);
+      background: rgba(0, 20, 40, 0.95);
       backdrop-filter: blur(10px);
       border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 15px;
-      padding: 20px;
-      min-width: 300px;
+      padding: 15px;
+      min-width: 280px;
+      max-width: 350px;
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      transform: translateX(0);
+      transition: transform 0.3s ease;
     }
-   
+    
+    .controls.hidden {
+      transform: translateX(-100%);
+    }
+    
+    .mobile-toggle {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 15;
+      background: rgba(0, 20, 40, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 25px;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #64ffda;
+      font-size: 20px;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+    
+    @media (max-width: 768px) {
+      .controls {
+        top: 5px;
+        left: 5px;
+        right: 5px;
+        min-width: auto;
+        max-width: none;
+        width: calc(100% - 70px);
+        padding: 12px;
+        font-size: 14px;
+      }
+      
+      .physics-panel {
+        bottom: 10px;
+        left: 5px;
+        right: 5px;
+        min-width: auto;
+        max-width: none;
+        padding: 10px;
+        transform: translateY(0);
+        transition: transform 0.3s ease;
+      }
+      
+      .physics-panel.hidden {
+        transform: translateY(100%);
+      }
+      
+      .info-panel {
+        display: none;
+      }
+      
+      .waveform {
+        display: none;
+      }
+      
+      .control-row {
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      
+      .button {
+        flex: 1;
+        min-width: 80px;
+        padding: 12px 8px;
+        font-size: 11px;
+      }
+      
+      select {
+        min-width: 100px;
+        padding: 10px 8px;
+        font-size: 14px;
+      }
+      
+      .checkbox-group {
+        gap: 10px;
+      }
+      
+      .checkbox-item {
+        flex: 1;
+      }
+      
+      input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .controls {
+        font-size: 13px;
+        padding: 10px;
+      }
+      
+      .control-group {
+        margin-bottom: 12px;
+      }
+      
+      .button {
+        padding: 10px 6px;
+        font-size: 10px;
+      }
+    }
+    
     .control-group {
       margin-bottom: 15px;
     }
-   
+    
     .control-group label {
       display: block;
       margin-bottom: 5px;
@@ -51,13 +164,13 @@
       letter-spacing: 1px;
       color: #64ffda;
     }
-   
+    
     .control-row {
       display: flex;
       gap: 10px;
       align-items: center;
     }
-   
+    
     select, input[type="range"] {
       background: rgba(255, 255, 255, 0.1);
       border: 1px solid rgba(255, 255, 255, 0.2);
@@ -66,11 +179,11 @@
       padding: 8px;
       font-size: 14px;
     }
-   
+    
     select {
       min-width: 120px;
     }
-   
+    
     input[type="range"] {
       flex: 1;
       height: 6px;
@@ -79,7 +192,7 @@
       background: rgba(255, 255, 255, 0.2);
       outline: none;
     }
-   
+    
     input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
@@ -89,7 +202,7 @@
       border-radius: 50%;
       cursor: pointer;
     }
-   
+    
     .button {
       background: linear-gradient(45deg, #64ffda, #00bcd4);
       border: none;
@@ -103,24 +216,24 @@
       text-transform: uppercase;
       letter-spacing: 1px;
     }
-   
+    
     .button:hover {
       transform: translateY(-2px);
       box-shadow: 0 5px 15px rgba(100, 255, 218, 0.4);
     }
-   
+    
     .button.danger {
       background: linear-gradient(45deg, #ff5722, #f44336);
       color: white;
     }
-   
+    
     .value-display {
       font-size: 11px;
       color: #64ffda;
       min-width: 40px;
       text-align: right;
     }
-   
+    
     .physics-panel {
       position: absolute;
       bottom: 20px;
@@ -134,7 +247,7 @@
       min-width: 250px;
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     }
-   
+    
     .info-panel {
       position: absolute;
       top: 20px;
@@ -148,12 +261,12 @@
       min-width: 200px;
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     }
-   
+    
     .star-info {
       font-size: 12px;
       line-height: 1.5;
     }
-   
+    
     .waveform {
       position: absolute;
       bottom: 20px;
@@ -166,19 +279,19 @@
       border-radius: 15px;
       z-index: 10;
     }
-   
+    
     .checkbox-group {
       display: flex;
       gap: 15px;
       flex-wrap: wrap;
     }
-   
+    
     .checkbox-item {
       display: flex;
       align-items: center;
       gap: 5px;
     }
-   
+    
     input[type="checkbox"] {
       width: 16px;
       height: 16px;
@@ -187,10 +300,13 @@
 </head>
 <body>
   <canvas id="canvas"></canvas>
- 
-  <div class="controls">
-    <h3 style="color: #64ffda; margin-bottom: 15px; text-align: center;">🎵 Constellation Studio</h3>
-   
+  
+  <!-- Mobile Toggle Button -->
+  <div class="mobile-toggle" id="mobileToggle">⚙️</div>
+  
+  <div class="controls" id="controlPanel">
+    <h3 style="color: #64ffda; margin-bottom: 15px; text-align: center; font-size: 16px;">🎵 Constellation Studio</h3>
+    
     <div class="control-group">
       <label>Instrument</label>
       <select id="instrument">
@@ -204,7 +320,7 @@
         <option value="bass">Bass</option>
       </select>
     </div>
-   
+    
     <div class="control-group">
       <label>Scale & Key</label>
       <div class="control-row">
@@ -227,7 +343,7 @@
         </select>
       </div>
     </div>
-   
+    
     <div class="control-group">
       <label>Tempo (BPM)</label>
       <div class="control-row">
@@ -235,7 +351,7 @@
         <span id="tempoValue" class="value-display">120</span>
       </div>
     </div>
-   
+    
     <div class="control-group">
       <label>Master Volume</label>
       <div class="control-row">
@@ -243,7 +359,7 @@
         <span id="volumeValue" class="value-display">30%</span>
       </div>
     </div>
-   
+    
     <div class="control-group">
       <div class="control-row">
         <button class="button" id="playBtn">▶ Play</button>
@@ -252,10 +368,10 @@
       </div>
     </div>
   </div>
- 
-  <div class="physics-panel">
-    <h4 style="color: #64ffda; margin-bottom: 10px;">Physics Settings</h4>
-   
+  
+  <div class="physics-panel" id="physicsPanel">
+    <h4 style="color: #64ffda; margin-bottom: 10px; font-size: 14px;">Physics Settings</h4>
+    
     <div class="checkbox-group">
       <div class="checkbox-item">
         <input type="checkbox" id="gravity" checked>
@@ -270,7 +386,7 @@
         <label for="trail">Trails</label>
       </div>
     </div>
-   
+    
     <div class="control-group">
       <label>Physics Strength</label>
       <div class="control-row">
@@ -279,7 +395,7 @@
       </div>
     </div>
   </div>
- 
+  
   <div class="info-panel">
     <h4 style="color: #64ffda; margin-bottom: 10px;">Info</h4>
     <div class="star-info">
@@ -289,7 +405,7 @@
       <div>BPM: <span id="currentBPM">120</span></div>
     </div>
   </div>
- 
+  
   <canvas id="waveform" class="waveform" width="300" height="100"></canvas>
 
   <script>
@@ -299,10 +415,10 @@
     const ctx = canvas.getContext("2d");
     const waveformCanvas = document.getElementById("waveform");
     const waveCtx = waveformCanvas.getContext("2d");
-   
+    
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-   
+    
     // Musical scales and notes
     const scales = {
       major: [0, 2, 4, 5, 7, 9, 11],
@@ -312,10 +428,10 @@
       dorian: [0, 2, 3, 5, 7, 9, 10],
       mixolydian: [0, 2, 4, 5, 7, 9, 10]
     };
-   
+    
     const noteNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
     const keyOffsets = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
-   
+    
     // App State
     let stars = [];
     let currentIndex = 0;
@@ -326,10 +442,10 @@
     let currentTempo = 120;
     let physicsEnabled = { gravity: true, collision: false, trail: true };
     let physicsStrength = 0.5;
-   
+    
     // Particle trail system
     let particles = [];
-   
+    
     class Star {
       constructor(x, y, instrument = 'sine') {
         this.x = x;
@@ -347,19 +463,19 @@
         this.amplitude = 0;
         this.phase = Math.random() * Math.PI * 2;
       }
-     
+      
       getScaledFrequency() {
         const scale = scales[document.getElementById('scale').value] || scales.major;
         const key = document.getElementById('key').value || 'C';
         const keyOffset = keyOffsets[key];
-       
+        
         const octave = 3 + Math.floor(Math.random() * 3);
         const scaleIndex = Math.floor(Math.random() * scale.length);
         const semitones = keyOffset + scale[scaleIndex];
-       
+        
         return 440 * Math.pow(2, (semitones + (octave - 4) * 12) / 12);
       }
-     
+      
       getNoteName() {
         const freq = this.freq;
         const A4 = 440;
@@ -368,7 +484,7 @@
         const noteIndex = ((semitone % 12) + 12) % 12;
         return noteNames[noteIndex] + octave;
       }
-     
+      
       getInstrumentColor() {
         const colors = {
           sine: '#64ffda',
@@ -382,15 +498,15 @@
         };
         return colors[this.instrument] || '#64ffda';
       }
-     
+      
       update() {
         if (physicsEnabled.gravity) {
           this.vy += 0.1 * physicsStrength;
         }
-       
+        
         this.x += this.vx;
         this.y += this.vy;
-       
+        
         // Bounce off walls
         if (this.x <= this.radius || this.x >= canvas.width - this.radius) {
           this.vx *= -0.8;
@@ -400,7 +516,7 @@
           this.vy *= -0.8;
           this.y = Math.max(this.radius, Math.min(canvas.height - this.radius, this.y));
         }
-       
+        
         // Collision detection
         if (physicsEnabled.collision) {
           stars.forEach(other => {
@@ -408,15 +524,15 @@
               const dx = other.x - this.x;
               const dy = other.y - this.y;
               const distance = Math.sqrt(dx * dx + dy * dy);
-             
+              
               if (distance < this.radius + other.radius) {
                 const angle = Math.atan2(dy, dx);
                 const targetX = this.x + Math.cos(angle) * (this.radius + other.radius);
                 const targetY = this.y + Math.sin(angle) * (this.radius + other.radius);
-               
+                
                 const ax = (targetX - other.x) * 0.05;
                 const ay = (targetY - other.y) * 0.05;
-               
+                
                 this.vx -= ax;
                 this.vy -= ay;
                 other.vx += ax;
@@ -425,7 +541,7 @@
             }
           });
         }
-       
+        
         // Create trail particles
         if (physicsEnabled.trail && (Math.abs(this.vx) > 0.1 || Math.abs(this.vy) > 0.1)) {
           particles.push({
@@ -436,16 +552,16 @@
             decay: 0.02
           });
         }
-       
+        
         // Update amplitude for visualization
         if (this.amplitude > 0) {
           this.amplitude *= 0.95;
         }
       }
-     
+      
       draw() {
         const glow = 10 + this.amplitude * 20;
-       
+        
         // Glow effect
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius + glow, 0, Math.PI * 2);
@@ -454,7 +570,7 @@
         gradient.addColorStop(1, this.color + '00');
         ctx.fillStyle = gradient;
         ctx.fill();
-       
+        
         // Main star
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
@@ -463,7 +579,7 @@
         ctx.strokeStyle = '#ffffff';
         ctx.lineWidth = 2;
         ctx.stroke();
-       
+        
         // Note label
         ctx.fillStyle = '#ffffff';
         ctx.font = '10px Arial';
@@ -471,7 +587,7 @@
         ctx.fillText(this.note, this.x, this.y - this.radius - 10);
       }
     }
-   
+    
     // Audio synthesis functions
     function createComplexInstrument(type, frequency, startTime, duration) {
       switch(type) {
@@ -487,169 +603,169 @@
           return createSimpleOscillator(type, frequency, startTime, duration);
       }
     }
-   
+    
     function createPianoSound(frequency, startTime, duration) {
       const gainNode = audioCtx.createGain();
-     
+      
       // Multiple harmonics for piano-like sound
       [1, 2, 3, 4].forEach((harmonic, i) => {
         const osc = audioCtx.createOscillator();
         const harmonicGain = audioCtx.createGain();
-       
+        
         osc.type = 'triangle';
         osc.frequency.value = frequency * harmonic;
-       
+        
         const volume = masterVolume / (harmonic * harmonic);
         harmonicGain.gain.setValueAtTime(volume, startTime);
         harmonicGain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
-       
+        
         osc.connect(harmonicGain);
         harmonicGain.connect(gainNode);
-       
+        
         osc.start(startTime);
         osc.stop(startTime + duration);
       });
-     
+      
       return gainNode;
     }
-   
+    
     function createBellSound(frequency, startTime, duration) {
       const gainNode = audioCtx.createGain();
-     
+      
       // Bell harmonics
       [1, 2.4, 3.2, 4.8].forEach((ratio, i) => {
         const osc = audioCtx.createOscillator();
         const harmonicGain = audioCtx.createGain();
-       
+        
         osc.type = 'sine';
         osc.frequency.value = frequency * ratio;
-       
+        
         const volume = masterVolume / (i + 1);
         harmonicGain.gain.setValueAtTime(volume, startTime);
         harmonicGain.gain.exponentialRampToValueAtTime(0.001, startTime + duration * 2);
-       
+        
         osc.connect(harmonicGain);
         harmonicGain.connect(gainNode);
-       
+        
         osc.start(startTime);
         osc.stop(startTime + duration * 2);
       });
-     
+      
       return gainNode;
     }
-   
+    
     function createDrumSound(frequency, startTime, duration) {
       const gainNode = audioCtx.createGain();
-     
+      
       // Noise for drum
       const bufferSize = audioCtx.sampleRate * duration;
       const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
       const data = buffer.getChannelData(0);
-     
+      
       for (let i = 0; i < bufferSize; i++) {
         data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.1));
       }
-     
+      
       const noise = audioCtx.createBufferSource();
       noise.buffer = buffer;
-     
+      
       // Filter for drum tone
       const filter = audioCtx.createBiquadFilter();
       filter.type = 'lowpass';
       filter.frequency.value = frequency * 2;
-     
+      
       gainNode.gain.setValueAtTime(masterVolume, startTime);
       gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
-     
+      
       noise.connect(filter);
       filter.connect(gainNode);
-     
+      
       noise.start(startTime);
-     
+      
       return gainNode;
     }
-   
+    
     function createBassSound(frequency, startTime, duration) {
       const gainNode = audioCtx.createGain();
       const osc = audioCtx.createOscillator();
-     
+      
       osc.type = 'sawtooth';
       osc.frequency.value = frequency / 2; // Lower octave
-     
+      
       const filter = audioCtx.createBiquadFilter();
       filter.type = 'lowpass';
       filter.frequency.value = frequency * 4;
       filter.Q.value = 5;
-     
+      
       gainNode.gain.setValueAtTime(masterVolume, startTime);
       gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
-     
+      
       osc.connect(filter);
       filter.connect(gainNode);
-     
+      
       osc.start(startTime);
       osc.stop(startTime + duration);
-     
+      
       return gainNode;
     }
-   
+    
     function createSimpleOscillator(type, frequency, startTime, duration) {
       const gainNode = audioCtx.createGain();
       const osc = audioCtx.createOscillator();
-     
+      
       osc.type = type;
       osc.frequency.value = frequency;
-     
+      
       gainNode.gain.setValueAtTime(masterVolume, startTime);
       gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
-     
+      
       osc.connect(gainNode);
       osc.start(startTime);
       osc.stop(startTime + duration);
-     
+      
       return gainNode;
     }
-   
+    
     function playStarSound(star) {
       const instrument = createComplexInstrument(
-        star.instrument,
-        star.freq,
-        audioCtx.currentTime,
+        star.instrument, 
+        star.freq, 
+        audioCtx.currentTime, 
         60 / currentTempo
       );
-     
+      
       instrument.connect(audioCtx.destination);
       star.amplitude = 1.0; // For visual feedback
-     
+      
       // Update info panel
       document.getElementById('currentNote').textContent = star.note;
     }
-   
+    
     // Visual effects
     function drawConnections() {
       if (stars.length < 2) return;
-     
+      
       ctx.strokeStyle = 'rgba(100, 255, 218, 0.3)';
       ctx.lineWidth = 2;
       ctx.beginPath();
-     
+      
       for (let i = 0; i < stars.length; i++) {
         const current = stars[i];
         const next = stars[(i + 1) % stars.length];
-       
+        
         if (i === 0) {
           ctx.moveTo(current.x, current.y);
         }
         ctx.lineTo(next.x, next.y);
       }
-     
+      
       ctx.stroke();
-     
+      
       // Highlight current connection
       if (stars.length > 1) {
         const current = stars[currentIndex];
         const next = stars[(currentIndex + 1) % stars.length];
-       
+        
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
         ctx.lineWidth = 4;
         ctx.beginPath();
@@ -658,11 +774,11 @@
         ctx.stroke();
       }
     }
-   
+    
     function drawParticles() {
       particles = particles.filter(particle => {
         particle.life -= particle.decay;
-       
+        
         if (particle.life > 0) {
           ctx.beginPath();
           ctx.arc(particle.x, particle.y, 2 * particle.life, 0, Math.PI * 2);
@@ -673,11 +789,382 @@
         return false;
       });
     }
-   
+    
     function drawWaveform() {
       waveCtx.clearRect(0, 0, waveformCanvas.width, waveformCanvas.height);
-     
+      
       if (stars.length === 0) return;
-     
+      
       const currentStar = stars[currentIndex % stars.length];
-      const freq = curr
+      const freq = currentStar ? currentStar.freq : 440;
+      
+      waveCtx.strokeStyle = currentStar ? currentStar.color : '#64ffda';
+      waveCtx.lineWidth = 2;
+      waveCtx.beginPath();
+      
+      const samples = waveformCanvas.width;
+      const amplitude = 40;
+      const centerY = waveformCanvas.height / 2;
+      
+      for (let i = 0; i < samples; i++) {
+        const x = i;
+        const t = (i / samples) * (1000 / freq) * 0.01;
+        let y;
+        
+        const instrument = currentStar ? currentStar.instrument : 'sine';
+        switch(instrument) {
+          case 'square':
+            y = Math.sign(Math.sin(2 * Math.PI * freq * t)) * amplitude;
+            break;
+          case 'triangle':
+            y = (2 / Math.PI) * Math.asin(Math.sin(2 * Math.PI * freq * t)) * amplitude;
+            break;
+          case 'sawtooth':
+            y = (2 * (freq * t - Math.floor(freq * t + 0.5))) * amplitude;
+            break;
+          default:
+            y = Math.sin(2 * Math.PI * freq * t) * amplitude;
+        }
+        
+        y = centerY + y * (currentStar ? currentStar.amplitude : 0);
+        
+        if (i === 0) {
+          waveCtx.moveTo(x, y);
+        } else {
+          waveCtx.lineTo(x, y);
+        }
+      }
+      
+      waveCtx.stroke();
+    }
+    
+    // Main render loop
+    function render(timestamp) {
+      const deltaTime = timestamp - lastTime;
+      lastTime = timestamp;
+      
+      // Clear canvas with trail effect
+      ctx.fillStyle = 'rgba(10, 10, 10, 0.1)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      // Update and draw particles
+      drawParticles();
+      
+      // Update and draw stars
+      stars.forEach(star => {
+        star.update();
+        star.draw();
+      });
+      
+      // Draw connections
+      drawConnections();
+      
+      // Draw waveform
+      drawWaveform();
+      
+      animationId = requestAnimationFrame(render);
+    }
+    
+    // Sequence player
+    function playSequence() {
+      if (stars.length > 0 && isPlaying) {
+        playStarSound(stars[currentIndex]);
+        currentIndex = (currentIndex + 1) % stars.length;
+      }
+      
+      if (isPlaying) {
+        setTimeout(playSequence, (60 / currentTempo) * 1000);
+      }
+    }
+    
+    // Touch and mobile support
+    let touchStartTime = 0;
+    let isTouch = false;
+    
+    // Enhanced event handlers for mobile
+    function handlePointerStart(e) {
+      e.preventDefault();
+      touchStartTime = Date.now();
+      isTouch = e.type.includes('touch');
+      
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+    
+    function handlePointerEnd(e) {
+      e.preventDefault();
+      const touchEndTime = Date.now();
+      const touchDuration = touchEndTime - touchStartTime;
+      
+      // Only create star if it's a tap/click (not a drag)
+      if (touchDuration < 300) {
+        const rect = canvas.getBoundingClientRect();
+        let x, y;
+        
+        if (e.type.includes('touch')) {
+          const touch = e.changedTouches[0];
+          x = (touch.clientX - rect.left) * (canvas.width / rect.width);
+          y = (touch.clientY - rect.top) * (canvas.height / rect.height);
+        } else {
+          x = (e.clientX - rect.left) * (canvas.width / rect.width);
+          y = (e.clientY - rect.top) * (canvas.height / rect.height);
+        }
+        
+        const instrument = document.getElementById('instrument').value;
+        const star = new Star(x, y, instrument);
+        stars.push(star);
+        
+        // Play the star immediately for feedback
+        playStarSound(star);
+        updateInfo();
+        
+        // Haptic feedback on mobile
+        if (navigator.vibrate) {
+          navigator.vibrate(50);
+        }
+      }
+    }
+    
+    // Add both touch and mouse events
+    canvas.addEventListener('touchstart', handlePointerStart, { passive: false });
+    canvas.addEventListener('mousedown', handlePointerStart);
+    canvas.addEventListener('touchend', handlePointerEnd, { passive: false });
+    canvas.addEventListener('click', handlePointerEnd);
+    
+    // Prevent context menu on mobile
+    canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+    
+    // Mobile toggle functionality
+    const mobileToggle = document.getElementById('mobileToggle');
+    const controlPanel = document.getElementById('controlPanel');
+    const physicsPanel = document.getElementById('physicsPanel');
+    let panelsVisible = true;
+    
+    mobileToggle.addEventListener('click', () => {
+      panelsVisible = !panelsVisible;
+      
+      if (panelsVisible) {
+        controlPanel.classList.remove('hidden');
+        physicsPanel.classList.remove('hidden');
+        mobileToggle.textContent = '⚙️';
+      } else {
+        controlPanel.classList.add('hidden');
+        physicsPanel.classList.add('hidden');
+        mobileToggle.textContent = '👁️';
+      }
+    });
+    
+    // Auto-hide panels on mobile after 3 seconds
+    let hideTimeout;
+    function autoHidePanels() {
+      if (window.innerWidth <= 768) {
+        clearTimeout(hideTimeout);
+        hideTimeout = setTimeout(() => {
+          if (panelsVisible) {
+            mobileToggle.click();
+          }
+        }, 3000);
+      }
+    }
+    
+    // Show panels when user interacts with controls
+    document.querySelectorAll('.controls input, .controls select, .controls button').forEach(element => {
+      element.addEventListener('focus', () => {
+        if (!panelsVisible) {
+          mobileToggle.click();
+        }
+        autoHidePanels();
+      });
+    });
+    
+    // Responsive canvas sizing
+    function resizeCanvas() {
+      const dpr = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      
+      ctx.scale(dpr, dpr);
+      
+      canvas.style.width = rect.width + 'px';
+      canvas.style.height = rect.height + 'px';
+    }
+    
+    // Initial setup and event listeners
+    window.addEventListener('resize', () => {
+      resizeCanvas();
+      autoHidePanels();
+    });
+    
+    window.addEventListener('orientationchange', () => {
+      setTimeout(resizeCanvas, 100);
+    });
+    
+    // Control event listeners
+    document.getElementById('playBtn').addEventListener('click', () => {
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      isPlaying = true;
+      playSequence();
+    });
+    
+    document.getElementById('pauseBtn').addEventListener('click', () => {
+      isPlaying = false;
+    });
+    
+    document.getElementById('clearBtn').addEventListener('click', () => {
+      stars = [];
+      particles = [];
+      currentIndex = 0;
+      isPlaying = false;
+      updateInfo();
+    });
+    
+    document.getElementById('tempo').addEventListener('input', (e) => {
+      currentTempo = parseInt(e.target.value);
+      document.getElementById('tempoValue').textContent = currentTempo;
+      document.getElementById('currentBPM').textContent = currentTempo;
+    });
+    
+    document.getElementById('volume').addEventListener('input', (e) => {
+      masterVolume = parseFloat(e.target.value);
+      document.getElementById('volumeValue').textContent = Math.round(masterVolume * 100) + '%';
+    });
+    
+    document.getElementById('physicsStrength').addEventListener('input', (e) => {
+      physicsStrength = parseFloat(e.target.value);
+      document.getElementById('physicsValue').textContent = physicsStrength;
+    });
+    
+    ['gravity', 'collision', 'trail'].forEach(id => {
+      document.getElementById(id).addEventListener('change', (e) => {
+        physicsEnabled[id] = e.target.checked;
+      });
+    });
+    
+    document.getElementById('scale').addEventListener('change', updateInfo);
+    document.getElementById('key').addEventListener('change', updateInfo);
+    
+    function updateInfo() {
+      document.getElementById('starCount').textContent = stars.length;
+      const scale = document.getElementById('scale').value;
+      const key = document.getElementById('key').value;
+      document.getElementById('currentKey').textContent = key + ' ' + scale.charAt(0).toUpperCase() + scale.slice(1);
+    }
+    
+    // Keyboard controls
+    document.addEventListener('keydown', (e) => {
+      switch(e.key) {
+        case ' ':
+          e.preventDefault();
+          if (isPlaying) {
+            document.getElementById('pauseBtn').click();
+          } else {
+            document.getElementById('playBtn').click();
+          }
+          break;
+        case 'c':
+        case 'C':
+          if (e.ctrlKey || e.metaKey) return;
+          document.getElementById('clearBtn').click();
+          break;
+        case 'ArrowUp':
+          e.preventDefault();
+          const tempoSlider = document.getElementById('tempo');
+          tempoSlider.value = Math.min(200, parseInt(tempoSlider.value) + 10);
+          tempoSlider.dispatchEvent(new Event('input'));
+          break;
+        case 'ArrowDown':
+          e.preventDefault();
+          const tempoSliderDown = document.getElementById('tempo');
+          tempoSliderDown.value = Math.max(60, parseInt(tempoSliderDown.value) - 10);
+          tempoSliderDown.dispatchEvent(new Event('input'));
+          break;
+      }
+    });
+    
+    // Window resize handler
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+    
+    // Initialize
+    updateInfo();
+    resizeCanvas();
+    autoHidePanels();
+    render(0);
+    
+    // Help tooltip - mobile friendly
+    setTimeout(() => {
+      const helpDiv = document.createElement('div');
+      const isMobile = window.innerWidth <= 768;
+      helpDiv.innerHTML = `
+        <div style="position: absolute; ${isMobile ? 'bottom: 20px; left: 10px; right: 10px;' : 'bottom: 50%; right: 50%; transform: translateX(50%);'} 
+                    background: rgba(0,0,0,0.9); color: white; padding: 15px; border-radius: 10px; 
+                    font-size: ${isMobile ? '16px' : '14px'}; z-index: 1000; max-width: ${isMobile ? 'none' : '400px'}; text-align: center;
+                    border: 1px solid rgba(255,255,255,0.2);">
+          <div style="color: #64ffda; font-weight: bold; margin-bottom: 10px;">🎵 Welcome to Constellation Music Studio!</div>
+          <div style="line-height: 1.6;">
+            • <strong>${isMobile ? 'Tap' : 'Click'}</strong> to create musical stars<br>
+            • <strong>⚙️ Button</strong> to toggle controls<br>
+            • <strong>Play Button</strong> to start/stop music<br>
+            • Stars follow physics and create melodies!<br>
+            ${isMobile ? '• <strong>Rotate device</strong> for best experience' : '• <strong>Spacebar</strong> to play/pause<br>• <strong>Arrow Keys</strong> to change tempo'}
+          </div>
+          <button onclick="this.parentElement.parentElement.remove()" 
+                  style="margin-top: 10px; background: #64ffda; border: none; 
+                         padding: ${isMobile ? '12px 20px' : '8px 15px'}; border-radius: 8px; cursor: pointer;
+                         font-size: ${isMobile ? '16px' : '14px'}; color: #000; font-weight: bold;">
+            Let's Create Music! 🎶
+          </button>
+        </div>
+      `;
+      document.body.appendChild(helpDiv);
+      
+      // Auto-remove after 8 seconds
+      setTimeout(() => {
+        if (helpDiv.parentElement) {
+          helpDiv.remove();
+        }
+      }, 8000);
+    }, 1000);
+    
+    // Add some visual flair
+    function createStarfield() {
+      const starfield = [];
+      for (let i = 0; i < 100; i++) {
+        starfield.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          size: Math.random() * 2,
+          twinkle: Math.random()
+        });
+      }
+      
+      function drawStarfield() {
+        starfield.forEach(star => {
+          star.twinkle += 0.02;
+          const alpha = (Math.sin(star.twinkle) + 1) / 2 * 0.3;
+          ctx.beginPath();
+          ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+          ctx.fill();
+        });
+      }
+      
+      // Add to render loop
+      const originalRender = render;
+      window.render = function(timestamp) {
+        drawStarfield();
+        originalRender.call(this, timestamp);
+      };
+    }
+    
+    createStarfield();
+  </script>
+</body>
+</html>
